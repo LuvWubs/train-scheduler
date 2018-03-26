@@ -24,25 +24,30 @@ $(document).ready(function() {
     displayTime();
 
     function nextArrival(onset, frequency) {
-      for (i = 0; i > onset.length; i++) {
-        let timeIndex = onset[i].split(i[1]);
-        // for (i = 0, i > timeIndex.length, i++) {
-        // var timeMM =
-          var timeMM = (timeIndex.pop().toString()) + (timeIndex.pop().toString());
-          parseInt(timeMM);
-          console.log('time in min: ', timeMM);
-        // }
-      }
-        var onset = timeMM / 60;
-        console.log('onset in nextArrival() is ', onset);
+      // console.log('first train at: ', onset);
+      // console.log('trains leave every: ', frequency);
+      // for (i = 0; i > onset.length; i++) {
+        // let timeIndex = onset[i].split(i[1]);
+        // var timeMM = (timeIndex.pop().toString()) + (timeIndex.pop().toString());
+        // parseInt(timeMM);
+        // console.log('time in min: ', timeMM);
+      // }
+        // var onset = timeMM / 60;
+        // console.log('onset in nextArrival() is ', onset);
+        moment().minute(frequency);
+        var hour = moment().hour(1);
+
+        // console.log(hour/frequency);
         let start = moment([onset]);
+        console.log('start: ', start);
         let stop = moment([frequency]);
+        console.log(('stop: ', stop));
         let next = start.diff(stop, 'min');
         // return next;
         // console.log('first  train at: ', start);
         // console.log('train frequency is: ', stop);
         console.log('next train is at: ', next);
-        return timeMM;
+        // return timeMM;
     }
 
     $(".form-control").keypress(function(e) {
@@ -64,18 +69,18 @@ $(document).ready(function() {
           destinationStation: destination,
           firstDeparture: onset,
           departureFrequency: frequency,
-        };
+        }
 
         if (!isNaN(departures)) {
           $(".panel-mssg").text('Please enter a valid train station name');
           $("#departure-input").val('').focus();
-          return;
+          // return;
         }
 
         if (!isNaN(destination)) {
           $(".panel-mssg").text('Please enter a valid train station name');
           $("#arrival-input").val('').focus();
-          return;
+          // return;
         }
 
         if (moment(onset, "H:mm A").isValid()) {
@@ -84,11 +89,11 @@ $(document).ready(function() {
         } else {
           $(".panel-mssg").text('Please enter a valid time for first train departure');
           $("#onset-input").val('').focus();
-          return;
+          // return;
         }
         console.log('train starts: ', onset);
         console.log('train frequency: ', frequency);
-        // nextArrival(onset, frequency);
+        nextArrival(onset, frequency);
         // let next = 10;
         // console.log('next train is at: ', timeMM);
         //
@@ -104,16 +109,15 @@ $(document).ready(function() {
 
     });
 
-    database.on("value", function(snapshot, value) {
+    database.on("child_added", function(snapshot, value) {
         let leave = snapshot.val().departureStation;
         let arrival = snapshot.val().destinationStation;
         let firstTrain = snapshot.val().firstDeparture;
         let oscillation = snapshot.val().departureFrequency;
 
-
-        $('#train').text(leave);
-        $('#arrival').text(arrival);
-        $('#howOften').text(oscillation);
+        $('#train').append(`<div>${leave}</div>`);
+        $('#arrival').append(`<div>${arrival}</div>`);
+        $('#howOften').append(`<div>${oscillation}</div>`);
     });
 
     //invoke the moment object w/ unix method and formatting
