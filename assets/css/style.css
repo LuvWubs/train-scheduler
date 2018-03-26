@@ -1,0 +1,66 @@
+body {
+	background-image: url('../images/train.jpg')
+}
+
+.jumbotron {
+	background-color: #cceeff;
+}
+
+.panel-heading {
+	text-align: center;
+}
+
+.panel-title {
+	font-size: 22px;
+	font-weight: 200;
+}
+
+.panel-body {
+	padding: 20px 60px;
+}
+
+.panel-mssg {
+	padding: 10px 0 0 60px;
+	font-size: 18px;
+}
+
+.clock {
+	text-align: center;
+}
+
+.title {
+	text-align: center;
+	font-weight: bold;
+}
+
+.input-title {
+	text-align: center;
+	border-bottom: grey;
+	font-size: 32px;
+	padding: 15px 0;
+}
+
+.input-body {
+	text-align: center;
+	border-top: grey;
+	font-weight: bold;
+}
+
+.userInputBody {
+	border: 1px solid grey;
+}
+
+.col {
+    display: block;
+    float: left;
+    margin: 1% 0 1% 1.6%;
+}
+
+.row {
+	margin-top: 10px;
+}
+
+#train, #arrival, #howOften {
+	text-align: center;
+	margin-left: 70px;
+}
