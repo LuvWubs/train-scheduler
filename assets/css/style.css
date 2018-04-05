@@ -70,4 +70,5 @@ body {
 #train, #arrival, #howOften {
 	text-align: center;
 	margin-left: 70px;
+	padding: 10px 0;
 }

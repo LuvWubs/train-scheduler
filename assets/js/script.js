@@ -18,37 +18,64 @@ $(document).ready(function() {
       let date = moment().format('dddd, MM/DD/YYYY')
       $("#time").html(time);
       $("#date").html(date);
-      setInterval(displayTime, 1000);
-    }
+    };
 
-    displayTime();
+    setInterval(displayTime, 1000);
+    // displayTime();
 
     function nextArrival(onset, frequency) {
-      // console.log('first train at: ', onset);
-      // console.log('trains leave every: ', frequency);
-      // for (i = 0; i > onset.length; i++) {
-        // let timeIndex = onset[i].split(i[1]);
-        // var timeMM = (timeIndex.pop().toString()) + (timeIndex.pop().toString());
-        // parseInt(timeMM);
-        // console.log('time in min: ', timeMM);
-      // }
-        // var onset = timeMM / 60;
-        // console.log('onset in nextArrival() is ', onset);
-        moment().minute(frequency);
-        var hour = moment().hour(1);
-
-        // console.log(hour/frequency);
-        let start = moment([onset]);
-        console.log('start: ', start);
-        let stop = moment([frequency]);
-        console.log(('stop: ', stop));
-        let next = start.diff(stop, 'min');
-        // return next;
-        // console.log('first  train at: ', start);
-        // console.log('train frequency is: ', stop);
+        // var min = moment(frequency, "mm");
+        // var min = moment().set('hour', frequency);
+        console.log('train starts: ', onset);
+        var hours = onset.slice(0, 2);
+        let colon = hours.search(/:/i)
+        console.log('colon: ', colon);
+        if (colon !== -1) {
+          console.log('the time was entered w/o colon: ', onset);
+        } else if (colon == -1) {
+          var removeIt = onset.replace(/:/g, '');
+          console.log('train w/o colon: ', removeIt);
+          var mins = removeIt.slice(2, 4);
+          console.log('typed hour is: ', hours);
+          console.log('typed mins are: ', mins);
+          console.log(typeof(mins));
+        }
+        var min = moment(frequency).format("mm");
+        console.log('train runs every ', frequency, ' minutes');
+        let newTime = removeIt;
+        console.log(typeof(newTime));
+        let next = parseInt(newTime) + parseInt(mins);
         console.log('next train is at: ', next);
-        // return timeMM;
-    }
+        let nextTrain = moment(next, "HH:mm A");
+        console.log(nextTrain);
+        // $("#nextArrival").text(nextTrain);
+        let minAway = moment().add(nextTrain, 'minutes')
+        let minTilArrival = moment(minAway, "HH:mm A");
+        // $("#minAway").text(minTilArrival);
+
+        //calculate the nextArrival
+        // invoke the moment object w/ unix method and formatting
+        // var displayDeets = moment().unix(trainDeets).format("HH:mm A");
+        //
+        // // calculate the frequency of trains in minutes (1440 = 24hrs in minutes)
+        // var n = "";
+        // for (n = 0; n < 1440; n++) {
+        //     text += f[n];
+        // };
+        // var f = $("#frequency-input") * (n + 1);
+        // var frequencyCalc = $("#frequency-input") + [f];
+        //
+        // var nextTrain = moment().diff(moment.unix(frequencyCalc, "X"), "minutes");
+        //
+        // let start = moment([onset]);
+        // console.log('start: ', start);
+        // let stop = moment([frequency]);
+        // console.log(('stop: ', stop));
+        // let next = start.diff(stop, 'min');
+        // // console.log('first  train at: ', start);
+        // // console.log('train frequency is: ', stop);
+        // console.log('next train is at: ', next);
+    };
 
     $(".form-control").keypress(function(e) {
       if (e.which == 13) {
@@ -63,44 +90,42 @@ $(document).ready(function() {
         var destination = $("#arrival-input").val().trim();
         var onset = $("#onset-input").val().trim();
         var frequency = $("#frequency-input").val().trim();
+        // var nextT;
+        // var farOut;
 
         var trainDeets = {
           departureStation: departures,
           destinationStation: destination,
           firstDeparture: onset,
           departureFrequency: frequency,
-        }
+          // next: nextT,
+          // minAway: farOut,
+        };
 
-        if (!isNaN(departures)) {
+        console.log('station name: ', departures);
+        if (isNaN(departures) == false) {
           $(".panel-mssg").text('Please enter a valid train station name');
           $("#departure-input").val('').focus();
           // return;
-        }
-
-        if (!isNaN(destination)) {
+        } else if (isNaN(destination) == false) {
+          console.log('destination name: ', destination);
           $(".panel-mssg").text('Please enter a valid train station name');
           $("#arrival-input").val('').focus();
-          // return;
-        }
+          return;
+        };
+        console.log('first train entered: ', onset);
 
         if (moment(onset, "H:mm A").isValid()) {
           database.push(trainDeets);
           console.log('time entered correctly');
-        } else {
-          $(".panel-mssg").text('Please enter a valid time for first train departure');
+        } else if (moment(onset, "HHmm A")){
+          // $(".panel-mssg").text('Please enter a valid time for first train departure');
+          console.log('first train departure entered w/o colon: ', onset);
           $("#onset-input").val('').focus();
-          // return;
-        }
-        console.log('train starts: ', onset);
-        console.log('train frequency: ', frequency);
+          return;
+        };
+
         nextArrival(onset, frequency);
-        // let next = 10;
-        // console.log('next train is at: ', timeMM);
-        //
-        // let nextTrain = moment(next, "HH:mm A");
-        // $("#nextArrival").text(nextTrain);
-        // let minTilArrival = moment(minTilArrival, "HH:mm A");
-        // $("#minAway").text(minTilArrival);
 
         $("#departure-input").val("");
         $("#arrival-input").val("");
@@ -114,28 +139,14 @@ $(document).ready(function() {
         let arrival = snapshot.val().destinationStation;
         let firstTrain = snapshot.val().firstDeparture;
         let oscillation = snapshot.val().departureFrequency;
+        // let next = snapshot.val().next;
+        // let minAway = snapshot.val().minAway;
 
         $('#train').append(`<div>${leave}</div>`);
         $('#arrival').append(`<div>${arrival}</div>`);
         $('#howOften').append(`<div>${oscillation}</div>`);
+        // $('#nextTrain').append(`<div>${next}</div>`);
+        // $('#minAway').append(`<div>${minAway}</div>`);
     });
-
-    //invoke the moment object w/ unix method and formatting
-    //var displayDeets = moment().unix(trainDeets).format("HH:mm A");
-
-
-    //calculate the frequency of trains in minutes (1440 = 24hrs in minutes)
-    // var n = "";
-    // for (n = 0; n < 1440; n++) {
-    //     text += f[n];
-    // };
-    // var f = $("#frequency-input") * (n + 1);
-    // var frequencyCalc = $("#frequency-input") + [f];
-
-    // //calculate the nextArrival
-    // var nextTrain = moment().diff(moment.unix(frequencyCalc, "X"), "minutes");
-
-    //display data from firebase into #input-body
-    // $("#input-body").append(departureStation + destinationStation + firstDeparture + departureFrequency);
 
 });
